@@ -2,14 +2,14 @@
 	"name": "@substreams/sdk",
 	"version": "0.1.0",
 	"type": "module",
-	"main": "dist/index.js",
+	"main": "dist/index.mjs",
 	"types": "dist/index.d.ts",
 	"files": [
 		"dist"
 	],
 	"exports": {
 		".": {
-			"import": "./dist/index.js"
+			"import": "./dist/index.mjs"
 		}
 	},
 	"scripts": {
