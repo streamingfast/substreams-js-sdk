@@ -1,10 +1,7 @@
 import { ClockSchema, Clock } from "../pb/sf/substreams/v1/clock_pb";
 import { fromBinary } from "@bufbuild/protobuf";
 
-/**
- * Returns the current block's clock information (block number, hash, timestamp).
- * This is injected by the runtime and should not be mocked or replaced.
- */
+// Returns the current block's clock information (block number, hash, timestamp). This is injected by the runtime and should not be mocked or replaced.
 export function getClock(): Clock {
 	let buf = (globalThis as any).__clock();
 
