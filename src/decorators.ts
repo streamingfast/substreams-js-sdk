@@ -33,12 +33,13 @@ export namespace substreams {
 		}
 
 		// Registers a store handler with the protobuf input
-		export function store(storeType: DescMessage) {
+		export function store(inputTypes: any[], storeType: DescMessage) {
 			return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
 				const handler = descriptor.value;
 				const instance = new target.constructor();
 				handlerRegistry.set(propertyKey, {
 					type: "store",
+					inputTypes,
 					handler,
 					instance,
 					storeType,
@@ -61,16 +62,15 @@ export function executeMapHandler(handlerName: string, inputBytes: Uint8Array): 
 }
 
 // Deserializes input using the registered schema, wraps the store interface and calls the handler with the StoreSet and input object.
-export function executeStoreHandler(handlerName: string, storeInterface: any, inputBytes: Uint8Array): void {
+export function executeStoreHandler(handlerName: string, storeInterface: any, ...inputBytes: Uint8Array[]): void {
 	const registered = handlerRegistry.get(handlerName);
 	if (!registered || registered.type !== "store") {
 		throw new Error(`Store handler '${handlerName}' not found`);
 	}
 
 	const store = new Store(storeInterface, registered.storeType!);
-
-	const input = fromBinary(registered.storeType!, inputBytes);
-	registered.handler.call(registered.instance, store, input);
+	const inputs = registered.inputTypes!.map((type, i) => fromBinary(type, inputBytes[i]));
+	registered.handler.call(registered.instance, store, ...inputs);
 }
 
 export function getHandlerType(handlerName: string): "map" | "store" | undefined {
